@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018 Sam Gleske - https://github.com/samrocketman/nexus3-config-as-code
+ * Copyright (c) 2018 Sam Gleske - https://github.com/samrocketman/docker-compose-local-nexus3-proxy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,6 +153,18 @@ void createRepository(String provider, String type, String name, Map json) {
             }
             if(json['docker']?.get('https_port', null)) {
                 docker.set('httpsPort', Integer.parseInt(json['docker']['https_port']))
+            }
+            if(type == 'proxy') {
+                def dockerProxy = repo_config.attributes('dockerProxy')
+                //index_type can be REGISTRY, HUB, or CUSTOM
+                def index_type = ((json['docker_proxy']?.get('index_type', null))?: 'REGISTRY').toUpperCase()
+                dockerProxy.set('indexType', index_type)
+                if(index_type == 'CUSTOM') {
+                    dockerProxy.set('indexUrl', ((json['docker_proxy']?.get('index_url', null))?: ''))
+                }
+                if(index_type != 'REGISTRY') {
+                    dockerProxy.set('useTrustStoreForIndexAccess', Boolean.parseBoolean((json['docker_proxy']?.get('use_trust_store_for_index_access', null))?: 'false'))
+                }
             }
         }
     }
