@@ -27,24 +27,37 @@ try:
 except ImportError:
     socks_supported = False
 
-version = "0.1"
+version = "0.2"
 
 username = os.getenv('NEXUS_USER', 'admin')
 password = os.getenv('NEXUS_PASSWORD', 'admin123')
 additional_args = os.getenv('NEXUS_CALL_ARGS', '')
 settings = {}
 
-parser = argparse.ArgumentParser(description="Upload Groovy script to Nexus 3 scripting endpoint.")
+epilog_text = '''
+Created by Sam Gleske (c) 2018.
+Apache Standard License v2
+https://github.com/samrocketman/nexus3-config-as-code
+'''
+
+parser = argparse.ArgumentParser(epilog=epilog_text, description='This program can upload, execute, and delete Groovy scripts to the Nexus Repository Manager version 3 Script API.  From now on, these scripts will be called "REST functions" or just "functions".  This allows for fast and easy automation.  By default, functions will only be uploaded.  Additional options can be specified to execute or delete functions.')
+servergroup = parser.add_argument_group('Connection options', 'NEXUS_USER and NEXUS_PASSWORD environment variables can be set to configure authorization.  Default: admin:admin123')
+scriptgroup = parser.add_argument_group('Nexus Script API Options', 'Uploading a script to a REST function will occur by default.  The following options will either skip or occur after the upload if specified.')
+fxngroup = parser.add_argument_group('REST Function Options')
+
 parser.add_argument('-V', '--version', action='version', version="%(prog)s "+version)
-parser.add_argument('-c', '--ca-file', default=os.getenv('NEXUS_CA_FILE'), metavar='CERT_PEM', dest='pinned_cert', help='Path to pinned CA chain in PEM format.  Can be self signed to guarantee secure connection.  It can also be set via NEXUS_CA_FILE environment variable.')
-parser.add_argument('-f', '--function', action="append", default=[], metavar='groovy-script', dest='groovy_files', help='A groovy script to be uploaded as a Nexus function.  The file name (minus the extension) will be the name of the REST function in Nexus.')
-parser.add_argument('-n', '--nexus', default=os.getenv('NEXUS_ENDPOINT', 'http://localhost:8081'), metavar='NEXUS_ENDPOINT', dest='nexus_endpoint', help='URL to the Nexus endpoint.')
-parser.add_argument('-p', '--proxy', default=os.getenv('NEXUS_SOCKS_PROXY'), metavar='proxy', dest='socks_proxy', help='Define a SOCKS5 proxy to proxy traffic.  It can also be set via NEXUS_SOCKS_PROXY environment variable.')
-parser.add_argument('-r', '--run', action='store_true', dest='run', help='Run function after uploading it.')
-parser.add_argument('-d', '--data', default='', metavar='data-file', dest='data', help='Data file whose contents get submitted to the function being run.  Depends on --run.  If more than one function is specified for upload, then this option is ignored.')
-parser.add_argument('--delete', action='store_true', dest='delete', help='Delete scripts instead of uploading them.')
-parser.add_argument('-s', '--skip-upload', action='store_true', dest='skip', help='Skip uploading the function to Nexus (and proceed to only run or delete).')
-parser.add_argument('-v', '--verbosity', action="count", dest='verbosity', help="Increase output verbosity.")
+parser.add_argument('-v', '--verbosity', action="count", dest='verbosity', help="Increase output verbosity.  Can be specified multiple times to increase verbosity (5 times for max).")
+
+servergroup.add_argument('-n', '--nexus', default=os.getenv('NEXUS_ENDPOINT', 'http://localhost:8081'), metavar='NEXUS_ENDPOINT', dest='nexus_endpoint', help='URL to the Nexus endpoint.  It can also be set via NEXUS_ENDPOINT environment variable.  Default: http://localhost:8081')
+servergroup.add_argument('-p', '--proxy', default=os.getenv('NEXUS_SOCKS_PROXY'), metavar='proxy', dest='socks_proxy', help='Define a SOCKS5 proxy to proxy traffic.  It can also be set via NEXUS_SOCKS_PROXY environment variable.')
+servergroup.add_argument('-c', '--ca-file', default=os.getenv('NEXUS_CA_FILE'), metavar='CERT_PEM', dest='pinned_cert', help='Path to pinned CA chain in PEM format.  Can be self signed to guarantee secure connection.  It can also be set via NEXUS_CA_FILE environment variable.')
+
+scriptgroup.add_argument('-s', '--skip-upload', action='store_true', dest='skip', help='Skip uploading the function to Nexus (and proceed to only run or delete).')
+scriptgroup.add_argument('-r', '--run', action='store_true', dest='run', help='Run function after uploading it.')
+scriptgroup.add_argument('-D', '--delete', action='store_true', dest='delete', help='Delete REST function from Nexus.  Occurs after upload and run.  Can be combined with --run to upload, run, and delete.')
+
+fxngroup.add_argument('-f', '--function', action="append", default=[], metavar='groovy-script', dest='groovy_files', help='A groovy script to be uploaded as a Nexus function.  The file name (minus the extension) will be the name of the REST function in Nexus.  If --skip-upload option is specified, then this can simply be the name of the REST function instead of a path to a Groovy script.')
+fxngroup.add_argument('-d', '--data', default='', metavar='data-file', dest='data', help='Data file whose contents get submitted to the function being run.  Depends on --run.  If more than one function is specified for upload, then this option is ignored.')
 
 if len(additional_args) > 0:
     if '|' in list(additional_args):
