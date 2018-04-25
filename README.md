@@ -27,10 +27,10 @@ Examples:
 
 ```bash
 # Delete all default repositories and blobl stores in Nexus
-./scripts/upload_function.py -rf ./functions/deleteAllConfigurations.groovy
+./scripts/upload_function.py -rf ./functions/deleteAllRepositoriesAndBlobstores.groovy
 
 # Configure new repositories and blob stores
-./scripts/upload_function.py -rf functions/nexusConfiguration.groovy -d ./settings/repository.json
+./scripts/upload_function.py -rf ./functions/repositoryConfiguration.groovy -d ./settings/repository.json
 ```
 
 # License
