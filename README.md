@@ -8,8 +8,8 @@ the need of granting anybody admin access to Nexus.
 
 # Configuration as Code
 
-- [Repository and Blob Store configuration as code
-  format](./docs/repositories.md).
+- [Repository Configuration as Code](./docs/repositories.md) format.  Covers
+  repositories and blob stores.  (TODO: Add content selectors)
 
 # Organization of this repository
 
@@ -33,7 +33,7 @@ provided to perform the following actions:
 Examples:
 
 ```bash
-# Delete all default repositories and blobl stores in Nexus
+# Delete all default repositories and blob stores in Nexus
 ./scripts/upload_function.py -rf ./functions/deleteAllRepositoriesAndBlobstores.groovy
 
 # Configure new repositories and blob stores

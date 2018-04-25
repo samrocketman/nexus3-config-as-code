@@ -1,11 +1,12 @@
-# Nexus Repository Configuration As Code
+# Nexus Repository Configuration as Code
 
-This document covers repository configuration as code (CaC).
+This document covers repository configuration as code (CaC) format.
 
+- Covers Repositories and Blob Stores.
 - The Script API function [`repositoryConfiguration`][fxn] is responsible for
   configuring Repositories and Blob Stores.
-- The configuration format for storing settings for Repositories and Blob Stores
-  is JSON.  See [an example `repository.json`][json] configuration.
+- The configuration format is JSON.  See [an example `repository.json`][json]
+  configuration.
 
 The repository configuration has two root keys available: `repositories` and
 `blobstores`.  Any extra keys will abort the configuration process during the
