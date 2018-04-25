@@ -40,6 +40,8 @@ Examples:
 ./scripts/upload_function.py -rf ./functions/repositoryConfiguration.groovy -d ./examples/repository.json
 ```
 
+See [additional USAGE](docs/USAGE.md) for more examples and options.
+
 # License
 
 [ASL v2](LICENSE)
