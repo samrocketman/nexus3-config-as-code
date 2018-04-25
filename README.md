@@ -7,9 +7,31 @@ the need of granting anybody admin access to Nexus.
 # Organization of this repository
 
 - `functions/` - a directory of Nexus scripts meant to be uploaded to the [Nexus
-  Script API][nexus-script].
+  Script API][nexus-script].  A script is what is called a "function" in this
+  repository and will be referenced from now on as a function.
 - `scripts/` - Local scripts designed to be run from automation or a local
   machine to interact with Nexus.
+
+# Executing Configuration As Code
+
+All configuration as code scripts are meant to be run via the [Nexus Script
+API][nexus-script].  [`./scripts/upload_function.py`][upload-fxn] has been
+provided to perform the following actions:
+
+- Upload functions to the Nexus Script API.
+- Delete functions from the Nexus Script API.
+- Execute functions available in the Nexus Script API.  Option to submit data as
+  an argument to the function is also possible.
+
+Examples:
+
+```bash
+# Delete all default repositories and blobl stores in Nexus
+./scripts/upload_function.py -rf ./functions/deleteAllConfigurations.groovy
+
+# Configure new repositories and blob stores
+./scripts/upload_function.py -rf functions/nexusConfiguration.groovy -d ./settings/repository.json
+```
 
 # License
 
@@ -32,3 +54,4 @@ limitations under the License.
 ```
 
 [nexus-script]: https://help.sonatype.com/repomanager3/rest-and-integration-api/script-api
+[upload-fxn]: ./scripts/upload_function.py
