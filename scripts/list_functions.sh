@@ -1,6 +1,6 @@
 #!/bin/bash
 #Created by Sam Gleske
-#License: ASLv2 https://github.com/samrocketman/docker-compose-local-nexus3-proxy
+#License: ASLv2 https://github.com/samrocketman/nexus3-config-as-code
 #Mon Apr 23 00:13:22 PDT 2018
 #Ubuntu 16.04.4 LTS
 #Linux 4.13.0-38-generic x86_64

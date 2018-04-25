@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.7
 #Created by Sam Gleske
-#License: ASLv2 https://github.com/samrocketman/docker-compose-local-nexus3-proxy
+#License: ASLv2 https://github.com/samrocketman/nexus3-config-as-code
 #Sun Apr 22 16:02:54 PDT 2018
 #Ubuntu 16.04.4 LTS
 #Linux 4.13.0-38-generic x86_64

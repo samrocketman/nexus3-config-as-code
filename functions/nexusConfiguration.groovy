@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018 Sam Gleske - https://github.com/samrocketman/docker-compose-local-nexus3-proxy
+ * Copyright (c) 2018 Sam Gleske - https://github.com/samrocketman/nexus3-config-as-code
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
