@@ -3,8 +3,8 @@
 - Tested against Nexus Repository Manager OSS 3.10.0-04
 
 This project contains scripts and standards for configuration as code for Nexus.
-This allows Nexus configuration changes to be review in pull requests and avoids
-the need of granting anybody admin access to Nexus.
+This allows Nexus configuration changes to be reviewed in pull requests and
+avoids the need of granting anybody admin access to Nexus.
 
 # Configuration as Code
 
