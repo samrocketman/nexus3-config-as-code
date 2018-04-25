@@ -285,4 +285,4 @@ options defined above as they're laid out in JSON.
 ```
 
 [fxn]: ../functions/repositoryConfiguration.groovy
-[json]: ../settings/repository.json
+[json]: ../examples/repository.json

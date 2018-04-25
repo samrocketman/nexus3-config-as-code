@@ -37,7 +37,7 @@ Examples:
 ./scripts/upload_function.py -rf ./functions/deleteAllRepositoriesAndBlobstores.groovy
 
 # Configure new repositories and blob stores
-./scripts/upload_function.py -rf ./functions/repositoryConfiguration.groovy -d ./settings/repository.json
+./scripts/upload_function.py -rf ./functions/repositoryConfiguration.groovy -d ./examples/repository.json
 ```
 
 # License
