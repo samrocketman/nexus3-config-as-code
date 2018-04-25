@@ -97,7 +97,8 @@ as code.  The repository name is `maven-central`, provider `maven2`, and type
 
 ### Default repository settings
 
-All repository settings must be JSON strings.
+All repository settings must be JSON strings.  Please refer to the Nexus
+documentation for the meaning of the settings.
 
 The following repository settings apply to all repository types.
 
@@ -106,6 +107,11 @@ The following repository settings apply to all repository types.
   - `strict_content_type_validation` - Valid values include `true` or `false`.
     Default: `false`
 - `online` - Valid values include `true` or `false`.  Default: `true`
+
+The following repository settings apply only to `group` type repositories.
+
+- `repositories` - A JSON Array of repository _names_.  Default: `[]` (an empty
+  array)
 
 The following repository settings apply only to `hosted` type repositories.
 
@@ -140,7 +146,143 @@ The following repository settings apply only to `docker` provider repositories.
   - `http_port` - A value between `0-65535`.  Default: undefined
   - `https_port` - A value between `0-65535`.  Default: undefined
 
-Please refer to the Nexus documentation for the meaning of the settings.
+The following repository settings apply only to `docker` provider repositories
+which are also `proxy` type.
+
+- `docker_proxy` object contains additional settings.
+  - `index_type` - Must be one of: `registry`, `hub`, or `custom`.  Default:
+    `registry`
+  - `index_url` - A URL to a docker index.  Ignored unless `index_type` is
+    `custom`.  Default: undefined
+  - `use_trust_store_for_index_access` - Ignored unless `index_type` is `hub` or
+    `custom`.  Valid values include `true` or `false`.  Default: `false`
+
+A JSON example of the above defaults in an exhaustive list.  It's not an example
+for practical use (it will fail validation).  Just for showing all of the
+options defined above as they're laid out in JSON.
+
+```json
+{
+    "repositories": {
+        "maven2": {
+            "group": {
+                "maven-public": {
+                    "blobstore": {
+                        "name": "maven-public",
+                        "strict_content_type_validation": "false"
+                    },
+                    "online": "true",
+                    "repositories": [
+                        "maven-releases",
+                        "maven-central"
+                    ],
+                    "version_policy": "release",
+                    "layout_policy": "permissive"
+                }
+            },
+            "hosted": {
+                "maven-releases": {
+                    "blobstore": {
+                        "name": "maven-releases",
+                        "strict_content_type_validation": "false"
+                    },
+                    "online": "true",
+                    "write_policy": "allow_once",
+                    "version_policy": "release",
+                    "layout_policy": "permissive"
+                }
+            },
+            "proxy": {
+                "maven-central": {
+                    "blobstore": {
+                        "name": "maven-central",
+                        "strict_content_type_validation": "false"
+                    },
+                    "online": "true",
+                    "remote": {
+                        "url": "",
+                        "blocked": "false",
+                        "auto_block": "true",
+                        "auth_type": "none",
+                        "user": "",
+                        "password": "",
+                        "ntlm_host": "",
+                        "ntlm_domain": ""
+                    },
+                    "version_policy": "release",
+                    "layout_policy": "permissive"
+                }
+            }
+        },
+        "docker": {
+            "group": {
+                "docker-public": {
+                    "blobstore": {
+                        "name": "docker-public",
+                        "strict_content_type_validation": "false"
+                    },
+                    "online": "true",
+                    "repositories": [
+                        "docker-releases",
+                        "dockerhub"
+                    ],
+                    "docker": {
+                        "force_basic_auth": "true",
+                        "v1_enabled": "false",
+                        "http_port": "",
+                        "https_port": ""
+                    }
+                }
+            },
+            "hosted": {
+                "docker-releases": {
+                    "blobstore": {
+                        "name": "docker-releases",
+                        "strict_content_type_validation": "false"
+                    },
+                    "online": "true",
+                    "docker": {
+                        "force_basic_auth": "true",
+                        "v1_enabled": "false",
+                        "http_port": "",
+                        "https_port": ""
+                    }
+                }
+            },
+            "proxy": {
+                "dockerhub": {
+                    "blobstore": {
+                        "name": "dockerhub",
+                        "strict_content_type_validation": "false"
+                    },
+                    "online": "true",
+                    "remote": {
+                        "url": "",
+                        "blocked": "false",
+                        "auto_block": "true",
+                        "auth_type": "none",
+                        "user": "",
+                        "password": "",
+                        "ntlm_host": "",
+                        "ntlm_domain": ""
+                    },
+                    "docker": {
+                        "force_basic_auth": "true",
+                        "v1_enabled": "false",
+                        "http_port": "",
+                        "https_port": ""
+                    },
+                    "docker_proxy": {
+                        "index_type": "registry",
+                        "index_url": "",
+                        "use_trust_store_for_index_access": "false"
+                    }
+                }
+            }
+        }
+    }
+}
+```
 
 [fxn]: ../functions/repositoryConfiguration.groovy
 [json]: ../settings/repository.json
