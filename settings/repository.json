@@ -1,0 +1,58 @@
+{
+    "repositories": {
+        "maven2": {
+            "proxy": {
+                "jenkinsci": {
+                    "remote": {
+                        "url": "https://repo.jenkins-ci.org/public/"
+                    },
+                    "blobstore": {
+                        "name": "maven-default"
+                    }
+                },
+                "maven-central": {
+                    "remote": {
+                        "url": "https://repo1.maven.org/maven2/"
+                    },
+                    "blobstore": {
+                        "name": "maven-default"
+                    }
+                },
+                "jcenter": {
+                    "remote": {
+                        "url": "https://jcenter.bintray.com/"
+                    },
+                    "blobstore": {
+                        "name": "maven-default"
+                    }
+                },
+                "gradle-plugins": {
+                    "remote": {
+                        "url": "https://plugins.gradle.org/m2/"
+                    },
+                    "blobstore": {
+                        "name": "maven-default"
+                    }
+                }
+            },
+            "group": {
+                "maven-public": {
+                    "repositories": [
+                        "maven-central",
+                        "jcenter",
+                        "jenkinsci",
+                        "gradle-plugins"
+                    ],
+                    "blobstore": {
+                        "name": "maven-default"
+                    }
+                }
+            }
+        }
+    },
+    "blobstores": {
+        "file": [
+            "maven-default"
+        ]
+    }
+}
