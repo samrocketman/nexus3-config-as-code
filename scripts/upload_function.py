@@ -47,10 +47,10 @@ parser.add_argument('-s', '--skip-upload', action='store_true', dest='skip', hel
 parser.add_argument('-v', '--verbosity', action="count", dest='verbosity', help="Increase output verbosity.")
 
 if len(additional_args) > 0:
-  if '|' in list(additional_args):
-      sys.argv = [sys.argv[0]] + additional_args.strip().split('|') + sys.argv[1:]
-  else:
-      sys.argv = [sys.argv[0]] + additional_args.strip().split() + sys.argv[1:]
+    if '|' in list(additional_args):
+        sys.argv = [sys.argv[0]] + additional_args.strip().split('|') + sys.argv[1:]
+    else:
+        sys.argv = [sys.argv[0]] + additional_args.strip().split() + sys.argv[1:]
 args = parser.parse_args()
 
 def trim_url_slash(url):
