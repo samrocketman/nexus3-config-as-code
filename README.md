@@ -6,6 +6,11 @@ This project contains scripts and standards for configuration as code for Nexus.
 This allows Nexus configuration changes to be review in pull requests and avoids
 the need of granting anybody admin access to Nexus.
 
+# Configuration as Code
+
+- [Repository and Blob Store configuration as code
+  format](./docs/repositories.md).
+
 # Organization of this repository
 
 - `functions/` - a directory of Nexus scripts meant to be uploaded to the [Nexus
