@@ -19,7 +19,6 @@ import os
 import re
 import ssl
 import sys
-import time
 
 try:
     import socket
