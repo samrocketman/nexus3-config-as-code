@@ -169,6 +169,13 @@ which are also `proxy` type.
   - `query_cache_item_max_age` - Must be an integer greater than `-1`.  Default:
     `3600`
 
+The following repository settings apply only to `bower` provider repositories
+which are also `proxy` type.
+
+- `bower` object contains additional settings.
+  - `rewrite_package_urls` - Valid values include `true` or `false`.  Default:
+    `true`
+
 A JSON example of the above defaults in an exhaustive list.  It's not an example
 for practical use (it will fail validation).  Just for showing all of the
 options defined above as they're laid out in JSON.
@@ -334,6 +341,35 @@ options defined above as they're laid out in JSON.
                 }
             }
         }
+        "bower": {
+            "proxy": {
+                "registry.bower.io": {
+                    "blobstore": {
+                        "name": "registry.bower.io",
+                        "strict_content_type_validation": "false"
+                    },
+                    "online": "true",
+                    "remote": {
+                        "url": "",
+                        "blocked": "false",
+                        "auto_block": "true",
+                        "content_max_age": "-1",
+                        "metadata_max_age": "1440",
+                        "auth_type": "none",
+                        "user": "",
+                        "password": "",
+                        "ntlm_host": "",
+                        "ntlm_domain": ""
+                    },
+                    "negative_cache": {
+                        "enabled": "true",
+                        "time_to_live": "1440"
+                    },
+                    "bower": {
+                        "rewrite_package_urls": "true"
+                    }
+                }
+            }
     }
 }
 ```
