@@ -124,14 +124,16 @@ The following repository settings apply only to `proxy` type repositories.
   - `url` - A URL to the remote.  Default: undefined
   - `blocked` - Valid values include `true` or `false`.  Default: `false`
   - `auto_block` - Valid values include `true` or `false`.  Default: `true`
-  - `content_max_age` - Must be a positive integer or `-1` for release
-    repositories.  Default: `-1`.
-  - `metadata_max_age` - Must be a positive integer.  Default: `1440`
+  - `content_max_age` - Must be an integer greater than `-1`.  Default: `-1`
+  - `metadata_max_age` - Must be an integer greater than `-1`.  Default: `1440`
   - `auth_type` - Must be one of: `none`, `username`, `ntml`.  Default: `none`
   - `user` - Available if `auth_type` is not `none`.  Default: undefined
   - `password` - Available if `auth_type` is not `none`.  Default: undefined
   - `ntlm_host` - Available if `auth_type` is not `none`.  Default: undefined
   - `ntlm_domain` - Available if `auth_type` is not `none`.  Default: undefined
+- `negative_cache` object contains additional settings.
+  - `enabled` - Valid values include `true` or `false`.  Default: `true`
+  - `time_to_live` - Must be an integer greater than `-1`.  Default: `1440`
 
 The following repository settings apply only to `maven2` provider repositories.
 
@@ -214,6 +216,10 @@ options defined above as they're laid out in JSON.
                         "ntlm_host": "",
                         "ntlm_domain": ""
                     },
+                    "negative_cache": {
+                        "enabled": "true",
+                        "time_to_live": "1440"
+                    },
                     "version_policy": "release",
                     "layout_policy": "permissive"
                 }
@@ -272,6 +278,10 @@ options defined above as they're laid out in JSON.
                         "password": "",
                         "ntlm_host": "",
                         "ntlm_domain": ""
+                    },
+                    "negative_cache": {
+                        "enabled": "true",
+                        "time_to_live": "1440"
                     },
                     "docker": {
                         "force_basic_auth": "true",
