@@ -2,49 +2,76 @@
     "repositories": {
         "maven2": {
             "proxy": {
-                "jenkinsci": {
-                    "remote": {
-                        "url": "https://repo.jenkins-ci.org/public/"
-                    },
-                    "blobstore": {
-                        "name": "maven-default"
-                    }
-                },
                 "maven-central": {
                     "remote": {
                         "url": "https://repo1.maven.org/maven2/"
                     },
                     "blobstore": {
-                        "name": "maven-default"
+                        "name": "default"
                     }
-                },
-                "jcenter": {
-                    "remote": {
-                        "url": "https://jcenter.bintray.com/"
-                    },
+                }
+            },
+            "hosted": {
+                "maven-releases": {
                     "blobstore": {
-                        "name": "maven-default"
-                    }
-                },
-                "gradle-plugins": {
-                    "remote": {
-                        "url": "https://plugins.gradle.org/m2/"
+                        "name": "default"
                     },
+                    "layout_policy": "strict"
+                },
+                "maven-snapshots": {
                     "blobstore": {
-                        "name": "maven-default"
-                    }
+                        "name": "default"
+                    },
+                    "version_policy": "snapshot",
+                    "layout_policy": "strict",
+                    "write_policy": "allow"
                 }
             },
             "group": {
                 "maven-public": {
                     "repositories": [
-                        "maven-central",
-                        "jcenter",
-                        "jenkinsci",
-                        "gradle-plugins"
+                        "maven-releases",
+                        "maven-snapshots",
+                        "maven-central"
                     ],
                     "blobstore": {
-                        "name": "maven-default"
+                        "name": "default",
+                        "strict_content_type_validation": "true"
+                    }
+                }
+            }
+        },
+        "nuget": {
+            "proxy": {
+                "nuget.org-proxy": {
+                    "remote": {
+                        "url": "https://www.nuget.org/api/v2/",
+                        "content_max_age": "1440"
+                    },
+                    "blobstore": {
+                        "name": "default",
+                        "strict_content_type_validation": "true"
+                    }
+                }
+            },
+            "hosted": {
+                "nuget-hosted": {
+                    "blobstore": {
+                        "name": "default",
+                        "strict_content_type_validation": "true"
+                    },
+                    "write_policy": "allow"
+                }
+            },
+            "group": {
+                "nuget-group": {
+                    "repositories": [
+                        "nuget-hosted",
+                        "nuget.org-proxy"
+                    ],
+                    "blobstore": {
+                        "name": "default",
+                        "strict_content_type_validation": "true"
                     }
                 }
             }
@@ -52,7 +79,7 @@
     },
     "blobstores": {
         "file": [
-            "maven-default"
+            "default"
         ]
     }
 }
