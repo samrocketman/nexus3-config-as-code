@@ -54,16 +54,16 @@ List<String> getKnownDesiredBlobStores(Map json) {
     }.flatten().sort().unique()
 }
 
-void checkForUniqueRepositories(Map json) {
+void checkRepositorFormat(Map json) {
     Map found = [:]
-    json['repositories'].each { provider_key, provider ->
-        provider.each { repo_type_key, repo_type ->
-            repo_type.each { repo_name, v ->
-                if(repo_name in found) {
-                    throw new MyException("Repository name conflict.  ${[provider_key, repo_type_key, repo_name].join(' -> ')} conflicts with ${found[repo_name]}.")
+    json['repositories'].each { provider, provider_value ->
+        provider_value.each { type, type_value ->
+            type_value.each { name, repo ->
+                if(name in found) {
+                    throw new MyException("Repository name conflict.  ${[provider, type, name].join(' -> ')} conflicts with ${found[name]}.")
                 }
                 else {
-                    found[repo_name] = [provider_key, repo_type_key, repo_name].join(' -> ')
+                    found[name] = [provider, type, name].join(' -> ')
                 }
             }
         }
@@ -88,7 +88,7 @@ void validateConfiguration(def json) {
     checkForEmptyValidation('repository types', (json['repositories'].collect { k, v -> v.keySet() as List }.flatten().sort().unique() - supported_repository_types))
     checkForEmptyValidation('blobstores defined in repositories.  The following must be listed in the blobstores',
             (getKnownDesiredBlobStores(json) - json['blobstores']['file']))
-    checkForUniqueRepositories(json)
+    checkRepositorFormat(json)
 }
 
 void createRepository(String provider, String type, String name, Map json) {
