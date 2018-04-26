@@ -141,6 +141,10 @@ void createRepository(String provider, String type, String name, Map json) {
                 default:
                     break
             }
+            if(provider == 'nuget') {
+                def nugetProxy = repo_config.attrivutes('nugetProxy')
+                nugetProxy.set('queryCacheItemMaxAge', Integer.parseInt((json['nuget_proxy']?.get('query_cache_item_max_age', null))?: '3600'))
+            }
         }
         if(provider == 'maven2') {
             def maven = repo_config.attributes('maven')
