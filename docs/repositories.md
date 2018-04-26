@@ -124,6 +124,9 @@ The following repository settings apply only to `proxy` type repositories.
   - `url` - A URL to the remote.  Default: undefined
   - `blocked` - Valid values include `true` or `false`.  Default: `false`
   - `auto_block` - Valid values include `true` or `false`.  Default: `true`
+  - `content_max_age` - Must be a positive integer or `-1` for release
+    repositories.  Default: `-1`.
+  - `metadata_max_age` - Must be a positive integer.  Default: `1440`
   - `auth_type` - Must be one of: `none`, `username`, `ntml`.  Default: `none`
   - `user` - Available if `auth_type` is not `none`.  Default: undefined
   - `password` - Available if `auth_type` is not `none`.  Default: undefined
@@ -203,6 +206,8 @@ options defined above as they're laid out in JSON.
                         "url": "",
                         "blocked": "false",
                         "auto_block": "true",
+                        "content_max_age": "-1",
+                        "metadata_max_age": "1440",
                         "auth_type": "none",
                         "user": "",
                         "password": "",
@@ -260,6 +265,8 @@ options defined above as they're laid out in JSON.
                         "url": "",
                         "blocked": "false",
                         "auto_block": "true",
+                        "content_max_age": "-1",
+                        "metadata_max_age": "1440",
                         "auth_type": "none",
                         "user": "",
                         "password": "",
