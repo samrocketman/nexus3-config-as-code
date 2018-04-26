@@ -130,7 +130,21 @@ void createRepository(String provider, String type, String name, Map json) {
             negativeCache.set('timeToLive', Integer.parseInt((json['negative_cache']?.get('time_to_live', null))?: '1440'))
             def connection = httpclient.child('connection')
             connection.set('useTrustStore', Boolean.parseBoolean(json['remote'].get('use_trust_store', 'false')))
-            //connection.set('', )
+            connection.set('enableCircularRedirects', Boolean.parseBoolean(json['connection']?.get('enable_circular_redirects', null)?: 'false'))
+            connection.set('enableCookies', Boolean.parseBoolean(json['connection']?.get('enable_cookies', null)?: 'false'))
+            if(json['connection']?.get('retries', null)) {
+                connection.set('retries', Integer.parseInt(json['connection']?.get('retries', null)))
+            }
+            else {
+                connection.set('retries', null)
+            }
+            if(json['connection']?.get('timeout', null)) {
+                connection.set('timeout', Integer.parseInt(json['connection']?.get('timeout', null)))
+            }
+            else {
+                connection.set('timeout', null)
+            }
+            connection.set('userAgentSuffix', json['connection']?.get('user_agent_suffix', ''))
             String auth_type = json['remote'].get('auth_type', 'none')
             switch(auth_type) {
                 case ['username', 'ntml']:
