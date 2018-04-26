@@ -128,6 +128,9 @@ void createRepository(String provider, String type, String name, Map json) {
             def negativeCache = repo_config.attributes('negativeCache')
             negativeCache.set('enabled', Boolean.parseBoolean((json['negative_cache']?.get('enabled', null))?: 'true'))
             negativeCache.set('timeToLive', Integer.parseInt((json['negative_cache']?.get('time_to_live', null))?: '1440'))
+            def connection = httpclient.child('connection')
+            connection.set('useTrustStore', Boolean.parseBoolean(json['remote'].get('use_trust_store', 'false')))
+            //connection.set('', )
             String auth_type = json['remote'].get('auth_type', 'none')
             switch(auth_type) {
                 case ['username', 'ntml']:
