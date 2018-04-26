@@ -136,6 +136,13 @@ The following repository settings apply only to `proxy` type repositories.
 - `negative_cache` object contains additional settings.
   - `enabled` - Valid values include `true` or `false`.  Default: `true`
   - `time_to_live` - Must be an integer greater than `-1`.  Default: `1440`
+- `connection` object contains additional settings.
+  - `user_agent_suffix` - A string.
+  - `retries` - Must be an integer greater than `0`.  Default: undefined
+  - `timeout` - Must be an integer greater than `0`.  Default: undefined
+  - `enable_circular_redirects` - Valid values include `true` or `false`.
+    Default: `false`
+  - `enable_cookies` - Valid values include `true` or `false`.  Default: `false`
 
 The following repository settings apply only to `maven2` provider repositories.
 
