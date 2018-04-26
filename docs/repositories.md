@@ -122,6 +122,8 @@ The following repository settings apply only to `proxy` type repositories.
 
 - `remote` object contains additional settings.
   - `url` - A URL to the remote.  Default: undefined
+  - `use_trust_store` - Valid values include `true` or `false`.  Default:
+    `false`
   - `blocked` - Valid values include `true` or `false`.  Default: `false`
   - `auto_block` - Valid values include `true` or `false`.  Default: `true`
   - `content_max_age` - Must be an integer greater than `-1`.  Default: `-1`
@@ -220,6 +222,7 @@ options defined above as they're laid out in JSON.
                     "online": "true",
                     "remote": {
                         "url": "",
+                        "use_trust_store": "false",
                         "blocked": "false",
                         "auto_block": "true",
                         "content_max_age": "-1",
@@ -283,6 +286,7 @@ options defined above as they're laid out in JSON.
                     "online": "true",
                     "remote": {
                         "url": "",
+                        "use_trust_store": "false",
                         "blocked": "false",
                         "auto_block": "true",
                         "content_max_age": "-1",
@@ -321,6 +325,7 @@ options defined above as they're laid out in JSON.
                     "online": "true",
                     "remote": {
                         "url": "",
+                        "use_trust_store": "false",
                         "blocked": "false",
                         "auto_block": "true",
                         "content_max_age": "-1",
@@ -351,6 +356,7 @@ options defined above as they're laid out in JSON.
                     "online": "true",
                     "remote": {
                         "url": "",
+                        "use_trust_store": "false",
                         "blocked": "false",
                         "auto_block": "true",
                         "content_max_age": "-1",
