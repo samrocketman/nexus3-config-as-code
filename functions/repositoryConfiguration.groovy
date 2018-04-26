@@ -145,6 +145,10 @@ void createRepository(String provider, String type, String name, Map json) {
                 def nugetProxy = repo_config.attributes('nugetProxy')
                 nugetProxy.set('queryCacheItemMaxAge', Integer.parseInt((json['nuget_proxy']?.get('query_cache_item_max_age', null))?: '3600'))
             }
+            else if(provider == 'bower') {
+                def bower = repo_config.attributes('bower')
+                bower.set('rewritePackageUrls', Boolean.parseBoolean((json['bower']?.get('rewrite_package_urls', null))?:'true'))
+            }
         }
         if(provider == 'maven2') {
             def maven = repo_config.attributes('maven')
