@@ -352,7 +352,7 @@ options defined above as they're laid out in JSON.
                     }
                 }
             }
-        }
+        },
         "bower": {
             "proxy": {
                 "registry.bower.io": {
