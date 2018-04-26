@@ -120,6 +120,8 @@ void createRepository(String provider, String type, String name, Map json) {
         else if(type == 'proxy') {
             def proxy = repo_config.attributes('proxy')
             proxy.set('remoteUrl', json['remote']['url'])
+            proxy.set('contentMaxAge', Integer.parseInt(json['remote'].get('content_max_age', '-1')))
+            proxy.set('metadataMaxAge', Integer.parseInt(json['remote'].get('metadata_max_age', '1440')))
             def httpclient = repo_config.attributes('httpclient')
             httpclient.set('autoBlock', Boolean.parseBoolean(json['remote'].get('auto_block', 'true')))
             httpclient.set('blocked', Boolean.parseBoolean(json['remote'].get('blocked', 'false')))
