@@ -154,6 +154,8 @@ void checkRepositorFormat(Map json) {
 }
 
 void validateContentSelectors(def json) {
+    String valid_name = '^[a-zA-Z0-9][-_.a-zA-Z0-9]*$'
+    Pattern name_validator = Pattern.compile(valid_name)
     List<String> supported_csel_settings = ['expression', 'description']
     CselValidator validator = new CselValidator()
     if(!(json in Map)) {
@@ -163,18 +165,28 @@ void validateContentSelectors(def json) {
         if(!(name in String) || name.size() == 0) {
             throw new MyException("Content selector does not have a valid name: found '${name}'.")
         }
+        if(!name_validator.matcher(name).matches()) {
+            throw new MyException("Invalid characters in content_selector name: '${name}'.  Only letters, digits, underscores(_), hyphens(-), and dots(.) are allowed and may not start with underscore or dot.")
+        }
         checkForEmptyValidation("keys within content selector '${name}'", ((csel_settings?.keySet() as List) - supported_csel_settings))
         if(('description' in csel_settings) && !(csel_settings['description'] in String)) {
-            throw new MyException("The description of the content selector named '${name}' must be a string.  Found type: ${csel_settings['description'].getClass().simpleName}")
+            throw new MyException("The description of the content selector named '${name}' must be a String.  Found type: ${csel_settings['description'].getClass().simpleName}")
         }
-        if(('expression' in csel_settings) && !(csel_settings['expression'] in String)) {
-            throw new MyException("The expression of the content selector named '${name}' must be a string.  Found type: ${csel_settings['expression'].getClass().simpleName}")
+        if(!((csel_settings['expression']?: '') in String)) {
+            throw new MyException("The expression of the content selector named '${name}' must be a String.  Found type: ${csel_settings['expression'].getClass().simpleName}")
         }
         String expression = csel_settings['expression']?:''
+        boolean expression_invalid = true
         try {
+            if(expression.size() == 0) {
+                expression_invalid = true
+            }
             validator.validate(expression)
         }
         catch(JexlException.Parsing e) {
+            expression_invalid = true
+        }
+        if(expression_invalid) {
             throw new MyException("Content selector ${name} contains an invalid expression.  Invalid expression: '${expression}'")
         }
     }
