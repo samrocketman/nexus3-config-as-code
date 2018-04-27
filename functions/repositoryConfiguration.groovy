@@ -79,6 +79,11 @@ void checkRepositorFormat(Map json) {
                         throw new MyException("${provider} proxy ${name} does not have a valid remote.url defined.")
                     }
                 }
+                if(provider == 'maven2') {
+                    if(!(repo.get('version_policy', 'release').toLowerCase() in ['mixed', 'snapshot', 'release'])) {
+                        throw new MyException("${provider} ${type} ${name} version_policy must be one of: mixed, snapshot, release.  Found: '${repo['version_policy']}'")
+                    }
+                }
             }
         }
     }
