@@ -112,15 +112,23 @@ void checkRepositorFormat(Map json) {
                         checkIntValue(provider, type, name, 'connection.retries', repo['connection']?.get('retries', null), 0)
                     }
                     if(repo['connection']?.get('timeout', null)) {
-                        checkIntValue(provider, type, name, 'connection.retries', repo['connection']?.get('timeout', null), 0)
+                        checkIntValue(provider, type, name, 'connection.timeout', repo['connection']?.get('timeout', null), 0)
+                    }
+                    if(provider == 'nuget') {
+                        checkIntValue(provider, type, name, 'nuget_proxy.query_cache_item_max_age', ((repo['nuget_proxy']?.get('query_cache_item_max_age', null))?: '3600'), 0)
                     }
                 }
                 if(provider == 'maven2') {
                     checkValueInList(provider, type, name, 'version_policy', repo.get('version_policy', 'release').toLowerCase(), ['mixed', 'snapshot', 'release'])
                     checkValueInList(provider, type, name, 'layout_policy', repo.get('layout_policy', 'permissive').toLowerCase(), ['strict', 'permissive'])
                 }
-                else if(provider == 'nuget' && type == 'proxy') {
-                    checkIntValue(provider, type, name, 'nuget_proxy.query_cache_item_max_age', ((repo['nuget_proxy']?.get('query_cache_item_max_age', null))?: '3600'), 0)
+                else if(provider == 'docker') {
+                    if(repo['docker']?.get('http_port', null)) {
+                        checkIntValue(provider, type, name, 'docker.http_port', repo['docker']?.get('http_port', null), 1, 65535)
+                    }
+                    if(repo['docker']?.get('https_port', null)) {
+                        checkIntValue(provider, type, name, 'docker.https_port', repo['docker']?.get('https_port', null), 1, 65535)
+                    }
                 }
             }
         }
@@ -300,5 +308,4 @@ config['repositories'].each { provider, provider_value ->
     }
 }
 
-//.metaClass.methods*.name.sort().unique().join(' ')
 'success'
