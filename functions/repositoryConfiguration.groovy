@@ -117,6 +117,9 @@ void checkRepositorFormat(Map json) {
                     if(provider == 'nuget') {
                         checkIntValue(provider, type, name, 'nuget_proxy.query_cache_item_max_age', ((repo['nuget_proxy']?.get('query_cache_item_max_age', null))?: '3600'), 0)
                     }
+                    else if(provider == 'docker') {
+                        checkValueInList(provider, type, name, 'docker_proxy.index_type', ((repo['docker_proxy']?.get('index_type', null))?: 'REGISTRY').toLowerCase(), ['registry', 'hub', 'custom'])
+                    }
                 }
                 if(provider == 'maven2') {
                     checkValueInList(provider, type, name, 'version_policy', repo.get('version_policy', 'release').toLowerCase(), ['mixed', 'snapshot', 'release'])
