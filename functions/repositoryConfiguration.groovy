@@ -19,6 +19,7 @@
  */
 
 import groovy.json.JsonSlurper
+import java.util.regex.Pattern
 import org.sonatype.nexus.repository.config.Configuration
 
 blobStoreManager = blobStore.blobStoreManager
@@ -55,6 +56,7 @@ List<String> getKnownDesiredBlobStores(Map json) {
 }
 
 void checkRepositorFormat(Map json) {
+    String valid_name = '^[a-zA-Z0-9][-_.a-zA-Z0-9]*$'
     Map found = [:]
     json['repositories'].each { provider, provider_value ->
         provider_value.each { type, type_value ->
@@ -64,6 +66,9 @@ void checkRepositorFormat(Map json) {
                 }
                 else {
                     found[name] = [provider, type, name].join(' -> ')
+                }
+                if(!Pattern.compile(valid_name).matcher(name).matches()) {
+                    throw new MyException("Invalid characters in name: '${name}'.  Only letters, digits, underscores(_), hyphens(-), and dots(.) are allowed and may not start with underscore or dot.")
                 }
             }
         }
@@ -75,7 +80,6 @@ void validateConfiguration(def json) {
     List<String> supported_blobstores = ['file']
     List<String> supported_repository_providers = ['bower', 'docker', 'gitlfs', 'maven2', 'npm', 'nuget', 'pypi', 'raw', 'rubygems']
     List<String> supported_repository_types = ['proxy', 'hosted', 'group']
-    String valid_name = '^[a-zA-Z0-9][-_.a-zA-Z0-9]*$'
     if(!(json in Map)) {
         throw new MyException("Configuration is not valid.  It must be a JSON object.  Instead, found a JSON array.")
     }
