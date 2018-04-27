@@ -176,7 +176,7 @@ void validateContentSelectors(def json) {
             throw new MyException("The expression of the content selector named '${name}' must be a String.  Found type: ${csel_settings['expression'].getClass().simpleName}")
         }
         String expression = csel_settings['expression']?:''
-        boolean expression_invalid = true
+        boolean expression_invalid = false
         try {
             if(expression.size() == 0) {
                 expression_invalid = true
