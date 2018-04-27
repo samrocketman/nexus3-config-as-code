@@ -56,6 +56,12 @@ List<String> getKnownDesiredBlobStores(Map json) {
     }.flatten().sort().unique()
 }
 
+void checkValueInList(String provider, String type, String name, String key, String value, List<String> allowed_values) {
+    if(!(value in allowed_values)) {
+        throw new MyException("${provider} ${type} ${name} ${key} must be one of: ${allowed_values.join(', ')}.  Found: '${value}'")
+    }
+}
+
 void checkRepositorFormat(Map json) {
     String valid_name = '^[a-zA-Z0-9][-_.a-zA-Z0-9]*$'
     Map found = [:]
@@ -71,7 +77,10 @@ void checkRepositorFormat(Map json) {
                 if(!Pattern.compile(valid_name).matcher(name).matches()) {
                     throw new MyException("Invalid characters in name: '${name}'.  Only letters, digits, underscores(_), hyphens(-), and dots(.) are allowed and may not start with underscore or dot.")
                 }
-                if(type == 'proxy') {
+                if(type == 'hosted') {
+                    checkValueInList(provider, type, name, 'write_policy', repo.get('write_policy', 'allow_once').toLowerCase(), ['allow_once', 'allow', 'deny'])
+                }
+                else if(type == 'proxy') {
                     try {
                         new URL(repo['remote']?.get('url', null)?: '')
                     }
@@ -80,12 +89,8 @@ void checkRepositorFormat(Map json) {
                     }
                 }
                 if(provider == 'maven2') {
-                    if(!(repo.get('version_policy', 'release').toLowerCase() in ['mixed', 'snapshot', 'release'])) {
-                        throw new MyException("${provider} ${type} ${name} version_policy must be one of: mixed, snapshot, release.  Found: '${repo['version_policy']}'")
-                    }
-                    if(!(repo.get('layout_policy', 'permissive').toLowerCase() in ['strict', 'permissive'])) {
-                        throw new MyException("${provider} ${type} ${name} layout_policy must be one of: strict, permissive.  Found: '${repo['layout_policy']}'")
-                    }
+                    checkValueInList(provider, type, name, 'version_policy', repo.get('version_policy', 'release').toLowerCase(), ['mixed', 'snapshot', 'release'])
+                    checkValueInList(provider, type, name, 'layout_policy', repo.get('layout_policy', 'permissive').toLowerCase(), ['strict', 'permissive'])
                 }
             }
         }
