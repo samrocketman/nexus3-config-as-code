@@ -19,9 +19,10 @@
  */
 
 import groovy.json.JsonSlurper
+import java.lang.NumberFormatException
+import java.net.MalformedURLException
 import java.util.regex.Pattern
 import org.sonatype.nexus.repository.config.Configuration
-import java.net.MalformedURLException
 
 blobStoreManager = blobStore.blobStoreManager
 repositoryManager = repository.repositoryManager
@@ -56,9 +57,27 @@ List<String> getKnownDesiredBlobStores(Map json) {
     }.flatten().sort().unique()
 }
 
-void checkValueInList(String provider, String type, String name, String key, String value, List<String> allowed_values) {
+void checkValueInList(String provider, String type, String name, String key, def value, List<String> allowed_values) {
     if(!(value in allowed_values)) {
         throw new MyException("${provider} ${type} ${name} ${key} must be one of: ${allowed_values.join(', ')}.  Found: '${value}'")
+    }
+}
+
+void checkIntValue(String provider, String type, String name, String key, def value, int lowerBound, def upperBound = null) {
+    int parsedValue
+    try {
+        parsedValue = Integer.parseInt(value)
+    }
+    catch(NumberFormatException e) {
+        throw new MyException("${provider} ${type} ${name} ${key} must be a number.  Invalid value: '${value}'")
+    }
+    if(upperBound == null) {
+        if(parsedValue < lowerBound) {
+            throw new MyException("${provider} ${type} ${name} ${key} must be greater or equal to ${lowerBound}.  Invalid value: ${parsedValue}")
+        }
+    }
+    else if(parsedValue < lowerBound || parsedValue > (upperBound as Integer)) {
+        throw new MyException("${provider} ${type} ${name} ${key} must be between ${lowerBound}-${upperBound}.  Invalid value: ${parsedValue}")
     }
 }
 
@@ -91,6 +110,9 @@ void checkRepositorFormat(Map json) {
                 if(provider == 'maven2') {
                     checkValueInList(provider, type, name, 'version_policy', repo.get('version_policy', 'release').toLowerCase(), ['mixed', 'snapshot', 'release'])
                     checkValueInList(provider, type, name, 'layout_policy', repo.get('layout_policy', 'permissive').toLowerCase(), ['strict', 'permissive'])
+                }
+                else if(provider == 'nuget' && type == 'proxy') {
+                    checkIntValue(provider, type, name, 'nuget_proxy.query_cache_item_max_age', ((repo['nuget_proxy']?.get('query_cache_item_max_age', null))?: '3600'), 0)
                 }
             }
         }
