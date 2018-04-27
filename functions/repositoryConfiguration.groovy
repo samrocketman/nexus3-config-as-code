@@ -108,6 +108,12 @@ void checkRepositorFormat(Map json) {
                     }
                     checkIntValue(provider, type, name, 'remote.content_max_age', repo['remote'].get('content_max_age', '-1'), -1)
                     checkIntValue(provider, type, name, 'remote.metadata_max_age', repo['remote'].get('metadata_max_age', '1440'), -1)
+                    if(repo['connection']?.get('retries', null)) {
+                        checkIntValue(provider, type, name, 'connection.retries', repo['connection']?.get('retries', null), 0)
+                    }
+                    if(repo['connection']?.get('timeout', null)) {
+                        checkIntValue(provider, type, name, 'connection.retries', repo['connection']?.get('timeout', null), 0)
+                    }
                 }
                 if(provider == 'maven2') {
                     checkValueInList(provider, type, name, 'version_policy', repo.get('version_policy', 'release').toLowerCase(), ['mixed', 'snapshot', 'release'])
