@@ -2,7 +2,7 @@
 
 This document covers repository configuration as code (CaC) format.
 
-- Covers Repositories and Blob Stores.
+- Covers Repositories, Blob Stores, and Content Selectors.
 - The Script API function [`repositoryConfiguration`][fxn] is responsible for
   configuring Repositories and Blob Stores.
 - The configuration format is JSON.  See [an example `repository.json`][json]
@@ -383,6 +383,22 @@ options defined above as they're laid out in JSON.
                     }
                 }
             }
+    }
+}
+```
+
+# Content Selector CaC
+
+Content selectors can be configured via the `content_selectors` key.  A content
+selector has three main components: a name, a description, and an expression.
+
+```json
+{
+    "content_selectors": {
+        "find-raw-csel": {
+            "description": "Find all raw repositories."
+            "expression": "format == \"raw\""
+        }
     }
 }
 ```

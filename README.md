@@ -9,7 +9,7 @@ avoids the need of granting anybody admin access to Nexus.
 # Configuration as Code
 
 - [Repository Configuration as Code](./docs/repositories.md) format.  Covers
-  repositories and blob stores.  (TODO: Add content selectors)
+  repositories, blob stores, and content selectors.
 
 # Organization of this repository
 
