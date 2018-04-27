@@ -83,6 +83,9 @@ void checkRepositorFormat(Map json) {
                     if(!(repo.get('version_policy', 'release').toLowerCase() in ['mixed', 'snapshot', 'release'])) {
                         throw new MyException("${provider} ${type} ${name} version_policy must be one of: mixed, snapshot, release.  Found: '${repo['version_policy']}'")
                     }
+                    if(!(repo.get('layout_policy', 'permissive').toLowerCase() in ['strict', 'permissive'])) {
+                        throw new MyException("${provider} ${type} ${name} layout_policy must be one of: strict, permissive.  Found: '${repo['layout_policy']}'")
+                    }
                 }
             }
         }
