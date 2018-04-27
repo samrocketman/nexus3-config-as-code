@@ -21,6 +21,7 @@
 import groovy.json.JsonSlurper
 import java.util.regex.Pattern
 import org.sonatype.nexus.repository.config.Configuration
+import java.net.MalformedURLException
 
 blobStoreManager = blobStore.blobStoreManager
 repositoryManager = repository.repositoryManager
@@ -69,6 +70,14 @@ void checkRepositorFormat(Map json) {
                 }
                 if(!Pattern.compile(valid_name).matcher(name).matches()) {
                     throw new MyException("Invalid characters in name: '${name}'.  Only letters, digits, underscores(_), hyphens(-), and dots(.) are allowed and may not start with underscore or dot.")
+                }
+                if(type == 'proxy') {
+                    try {
+                        new URL(repo['remote']?.get('url', null)?: '')
+                    }
+                    catch(MalformedURLException e) {
+                        throw new MyException("${provider} proxy ${name} does not have a valid remote.url defined.")
+                    }
                 }
             }
         }
