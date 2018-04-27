@@ -22,10 +22,15 @@ import groovy.json.JsonSlurper
 import java.lang.NumberFormatException
 import java.net.MalformedURLException
 import java.util.regex.Pattern
+import org.apache.commons.jexl3.JexlException
 import org.sonatype.nexus.repository.config.Configuration
+import org.sonatype.nexus.selector.CselValidator
+import org.sonatype.nexus.selector.SelectorConfiguration
+import org.sonatype.nexus.selector.SelectorManager
 
 blobStoreManager = blobStore.blobStoreManager
 repositoryManager = repository.repositoryManager
+selectorManager = container.lookup(SelectorManager.class.name)
 
 /**
   A custom exception class to limit unnecessary text in the JSON result of the
@@ -94,7 +99,7 @@ void checkRepositorFormat(Map json) {
                     found[name] = [provider, type, name].join(' -> ')
                 }
                 if(!Pattern.compile(valid_name).matcher(name).matches()) {
-                    throw new MyException("Invalid characters in name: '${name}'.  Only letters, digits, underscores(_), hyphens(-), and dots(.) are allowed and may not start with underscore or dot.")
+                    throw new MyException("Invalid characters in ${provider} ${type} name: '${name}'.  Only letters, digits, underscores(_), hyphens(-), and dots(.) are allowed and may not start with underscore or dot.")
                 }
                 if(type == 'hosted') {
                     checkValueInList(provider, type, name, 'write_policy', repo.get('write_policy', 'allow_once').toLowerCase(), ['allow_once', 'allow', 'deny'])
@@ -148,8 +153,35 @@ void checkRepositorFormat(Map json) {
     }
 }
 
+void validateContentSelectors(def json) {
+    List<String> supported_csel_settings = ['expression', 'description']
+    CselValidator validator = new CselValidator()
+    if(!(json in Map)) {
+        throw new MyException("content_selectors must be a Map (JSON Object).  Instead found: ${json.getClass().simpleName}")
+    }
+    json.each { name, csel_settings ->
+        if(!(name in String) || name.size() == 0) {
+            throw new MyException("Content selector does not have a valid name: found '${name}'.")
+        }
+        checkForEmptyValidation("keys within content selector '${name}'", ((csel_settings?.keySet() as List) - supported_csel_settings))
+        if(('description' in csel_settings) && !(csel_settings['description'] in String)) {
+            throw new MyException("The description of the content selector named '${name}' must be a string.  Found type: ${csel_settings['description'].getClass().simpleName}")
+        }
+        if(('expression' in csel_settings) && !(csel_settings['expression'] in String)) {
+            throw new MyException("The expression of the content selector named '${name}' must be a string.  Found type: ${csel_settings['expression'].getClass().simpleName}")
+        }
+        String expression = csel_settings['expression']?:''
+        try {
+            validator.validate(expression)
+        }
+        catch(JexlException.Parsing e) {
+            throw new MyException("Content selector ${name} contains an invalid expression.  Invalid expression: '${expression}'")
+        }
+    }
+}
+
 void validateConfiguration(def json) {
-    List<String> supported_root_keys = ['repositories', 'blobstores']
+    List<String> supported_root_keys = ['repositories', 'blobstores', 'content_selectors']
     List<String> supported_blobstores = ['file']
     List<String> supported_repository_providers = ['bower', 'docker', 'gitlfs', 'maven2', 'npm', 'nuget', 'pypi', 'raw', 'rubygems']
     List<String> supported_repository_types = ['proxy', 'hosted', 'group']
@@ -157,15 +189,25 @@ void validateConfiguration(def json) {
         throw new MyException("Configuration is not valid.  It must be a JSON object.  Instead, found a JSON array.")
     }
     checkForEmptyValidation('root keys', ((json.keySet() as List) - supported_root_keys))
-    checkForEmptyValidation('blobstore types', ((json['blobstores']?.keySet() as List) - supported_blobstores))
-    if(!(json['blobstores']?.get('file') in List) || false in json['blobstores']?.get('file').collect { it in String }) {
-        throw new MyException('blobstore file type must contain a list of Strings.')
+    supported_root_keys.each {
+        if((it in json) && !(json[it] in Map)) {
+            throw new MyException("${it} must be a Map (JSON Object).  Instead found: ${json[it].getClass().simpleName}")
+        }
     }
-    checkForEmptyValidation('repository providers', ((json['repositories']?.keySet() as List) - supported_repository_providers))
-    checkForEmptyValidation('repository types', (json['repositories'].collect { k, v -> v.keySet() as List }.flatten().sort().unique() - supported_repository_types))
-    checkForEmptyValidation('blobstores defined in repositories.  The following must be listed in the blobstores',
-            (getKnownDesiredBlobStores(json) - json['blobstores']['file']))
-    checkRepositorFormat(json)
+    if('blobstores' in json || 'repositories' in json) {
+        checkForEmptyValidation('blobstore types', ((json['blobstores']?.keySet() as List) - supported_blobstores))
+        if(!(json['blobstores']?.get('file') in List) || false in json['blobstores']?.get('file').collect { it in String }) {
+            throw new MyException('blobstore file type must contain a list of Strings.')
+        }
+        checkForEmptyValidation('repository providers', ((json['repositories']?.keySet() as List) - supported_repository_providers))
+        checkForEmptyValidation('repository types', (json['repositories'].collect { k, v -> v.keySet() as List }.flatten().sort().unique() - supported_repository_types))
+        checkForEmptyValidation('blobstores defined in repositories.  The following must be listed in the blobstores',
+                (getKnownDesiredBlobStores(json) - json['blobstores']['file']))
+        checkRepositorFormat(json)
+    }
+    if('content_selectors' in json) {
+        validateContentSelectors(json['content_selectors'])
+    }
 }
 
 void createRepository(String provider, String type, String name, Map json) {
@@ -283,6 +325,25 @@ void createRepository(String provider, String type, String name, Map json) {
     }
 }
 
+void createSelector(String name, Map json) {
+    boolean exists = true
+    SelectorConfiguration selector = selectorManager.browse().find { it.name == name }
+    if(!selector) {
+        selector = new SelectorConfiguration(name: name, type: 'csel')
+        exists = false
+    }
+    selector.attributes = [
+        expression: json.get('expression', '')
+    ]
+    selector.description = json.get('description', '')
+    if(exists) {
+        selectorManager.update(selector)
+    }
+    else {
+        selectorManager.create(selector)
+    }
+}
+
 /*
  * Main execution
  */
@@ -297,19 +358,23 @@ validateConfiguration(config)
 //we've come this far so it is probably good?
 
 //create blob stores first
-config['blobstores']['file'].each { String store ->
-    if(!blobStoreManager.get(store)) {
-        blobStore.createFileBlobStore(store, store)
+if('blobstores' in config) {
+    config['blobstores']['file'].each { String store ->
+        if(!blobStoreManager.get(store)) {
+            blobStore.createFileBlobStore(store, store)
+        }
     }
 }
 
 //create non-group repositories second
-config['repositories'].each { provider, provider_value ->
-    provider_value.findAll { k, v ->
-        k != 'group'
-    }.each { type, type_value ->
-        type_value.each { name, name_value ->
-            createRepository(provider, type, name, name_value)
+if('repositories' in config) {
+    config['repositories'].each { provider, provider_value ->
+        provider_value.findAll { k, v ->
+            k != 'group'
+        }.each { type, type_value ->
+            type_value.each { name, name_value ->
+                createRepository(provider, type, name, name_value)
+            }
         }
     }
 }
@@ -318,6 +383,13 @@ config['repositories'].each { provider, provider_value ->
 config['repositories'].each { provider, provider_value ->
     provider_value['group'].each { name, name_value ->
         createRepository(provider, 'group', name, name_value)
+    }
+}
+
+//create content selectors
+if('content_selectors' in config) {
+    config['content_selectors'].each { name, settings ->
+        createSelector(name, settings)
     }
 }
 
