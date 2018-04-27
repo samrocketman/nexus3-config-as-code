@@ -396,7 +396,7 @@ selector has three main components: a name, a description, and an expression.
 {
     "content_selectors": {
         "find-raw-csel": {
-            "description": "Find all raw repositories."
+            "description": "Find all raw repositories.",
             "expression": "format == \"raw\""
         }
     }
