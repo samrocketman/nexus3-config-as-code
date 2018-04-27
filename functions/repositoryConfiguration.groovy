@@ -106,6 +106,8 @@ void checkRepositorFormat(Map json) {
                     catch(MalformedURLException e) {
                         throw new MyException("${provider} proxy ${name} does not have a valid remote.url defined.")
                     }
+                    checkIntValue(provider, type, name, 'remote.content_max_age', repo['remote'].get('content_max_age', '-1'), -1)
+                    checkIntValue(provider, type, name, 'remote.metadata_max_age', repo['remote'].get('metadata_max_age', '1440'), -1)
                 }
                 if(provider == 'maven2') {
                     checkValueInList(provider, type, name, 'version_policy', repo.get('version_policy', 'release').toLowerCase(), ['mixed', 'snapshot', 'release'])
