@@ -118,7 +118,17 @@ void checkRepositorFormat(Map json) {
                         checkIntValue(provider, type, name, 'nuget_proxy.query_cache_item_max_age', ((repo['nuget_proxy']?.get('query_cache_item_max_age', null))?: '3600'), 0)
                     }
                     else if(provider == 'docker') {
-                        checkValueInList(provider, type, name, 'docker_proxy.index_type', ((repo['docker_proxy']?.get('index_type', null))?: 'REGISTRY').toLowerCase(), ['registry', 'hub', 'custom'])
+                        String index_type = ((repo['docker_proxy']?.get('index_type', null))?: 'REGISTRY').toLowerCase()
+                        checkValueInList(provider, type, name, 'docker_proxy.index_type', index_type, ['registry', 'hub', 'custom'])
+                        if(index_type == 'custom') {
+                            String url = (repo['docker_proxy']?.get('index_url', null))?: ''
+                            try {
+                                new URL(url)
+                            }
+                            catch(MalformedURLException e) {
+                                throw new MyException("${provider} proxy ${name} does not have a valid docker_proxy.index_url defined.  Validation required when using custom index_type.  Invalid value: '${url}'")
+                            }
+                        }
                     }
                 }
                 if(provider == 'maven2') {
