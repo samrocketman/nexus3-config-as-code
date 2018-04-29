@@ -27,7 +27,7 @@ try:
 except ImportError:
     socks_supported = False
 
-version = "0.2"
+version = "0.3"
 
 username = os.getenv('NEXUS_USER', 'admin')
 password = os.getenv('NEXUS_PASSWORD', 'admin123')
@@ -58,6 +58,7 @@ scriptgroup.add_argument('-D', '--delete', action='store_true', dest='delete', h
 
 fxngroup.add_argument('-f', '--function', action="append", default=[], metavar='groovy-script', dest='groovy_files', help='A groovy script to be uploaded as a Nexus function.  The file name (minus the extension) will be the name of the REST function in Nexus.  If --skip-upload option is specified, then this can simply be the name of the REST function instead of a path to a Groovy script.')
 fxngroup.add_argument('-d', '--data', default='', metavar='data-file', dest='data', help='Data file whose contents get submitted to the function being run.  Depends on --run.  If more than one function is specified for upload, then this option is ignored.')
+fxngroup.add_argument('-S', '--data-string', default='', metavar='data-string', dest='datastring', help='Argument gets submitted to the function being run as data.  Depends on --run.  If more than one function is specified for upload, then this option is ignored.  This option overrides --data.')
 
 if len(additional_args) > 0:
     if '|' in list(additional_args):
@@ -236,7 +237,9 @@ if not args.skip:
 if args.run:
     headers['Content-Type'] = 'text/plain'
     data = None
-    if len(args.groovy_files) == 1 and len(args.data) > 0:
+    if len(args.groovy_files) == 1 and len(args.datastring) > 0:
+        data = args.datastring
+    elif len(args.groovy_files) == 1 and len(args.data) > 0:
         with open(args.data, 'r') as f:
             data = f.read()
     for script in args.groovy_files:
