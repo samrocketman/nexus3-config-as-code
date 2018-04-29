@@ -20,11 +20,13 @@
    nothing.
  */
 
-import groovy.json.JsonOutput
 import org.sonatype.nexus.repository.types.GroupType
+import org.sonatype.nexus.selector.SelectorConfiguration
+import org.sonatype.nexus.selector.SelectorManager
 
 blobStoreManager = blobStore.blobStoreManager
 repositoryManager = repository.repositoryManager
+selectorManager = container.lookup(SelectorManager.class.name)
 
 void deleteAllRepositories(Class clazz = null) {
     List<String> groups
@@ -48,7 +50,19 @@ void deleteAllBlobStores() {
     }
 }
 
+void deleteAllContentSelectors() {
+    List<SelectorConfiguration> selectors = selectorManager.browse()
+    selectors.each {
+        selectorManager.delete(it)
+    }
+}
+
+if(args.trim() != 'delete') {
+    return 'ERROR: must submit \'delete\' as POST data in order to really delete.  This is a protection from accidental wiping of an entire Nexus installation.'
+}
+
 deleteAllRepositories(GroupType)
 deleteAllRepositories()
 deleteAllBlobStores()
+deleteAllContentSelectors()
 'success'
