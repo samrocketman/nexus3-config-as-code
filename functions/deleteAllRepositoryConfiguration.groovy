@@ -18,6 +18,9 @@
    Delete all repositories all blob stores, and all content selectors in Nexus
    configuration.  This is meant to set the repository configuration state to
    nothing.
+
+   Example of executing:
+   upload_function.py -rf deleteAllRepositoryConfiguration.groovy -S delete
  */
 
 import org.sonatype.nexus.repository.types.GroupType

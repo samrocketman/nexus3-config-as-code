@@ -75,3 +75,8 @@ Upload, Execute, and Delete REST function all in one action.
 Do the same thing but also pass POST data to the REST function.
 
     upload_function.py -Drf path/to/someFunction.groovy -d path/to/data.txt
+
+Delete all Repository data in a Nexus installation.  This includes all
+repositories, blob stores, and content selectors.
+
+    ./scripts/upload_function.py -rf ./functions/deleteAllRepositoryConfiguration.groovy -S delete
