@@ -15,8 +15,8 @@
  */
 
 /*
-   Delete all repositories and all blob stores in the default Nexus
-   configuration.  This is meant to set the blob store and repository state to
+   Delete all repositories all blob stores, and all content selectors in Nexus
+   configuration.  This is meant to set the repository configuration state to
    nothing.
  */
 
