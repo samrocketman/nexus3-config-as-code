@@ -157,8 +157,8 @@ The following repository settings apply only to `docker` provider repositories.
   - `force_basic_auth` - Valid values include `true` or `false`.  Default:
     `true`
   - `v1_enabled` - Valid values include `true` or `false`.  Default: `false`
-  - `http_port` - A value between `0-65535`.  Default: undefined
-  - `https_port` - A value between `0-65535`.  Default: undefined
+  - `http_port` - A value between `1-65535`.  Default: undefined
+  - `https_port` - A value between `1-65535`.  Default: undefined
 
 The following repository settings apply only to `docker` provider repositories
 which are also `proxy` type.
