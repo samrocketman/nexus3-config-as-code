@@ -32,15 +32,9 @@ repositoryManager = repository.repositoryManager
 selectorManager = container.lookup(SelectorManager.class.name)
 
 void deleteAllRepositories(Class clazz = null) {
-    List<String> groups
-    if(clazz) {
-        groups = repositoryManager.browse().findAll {
-            it.type in GroupType
-        }*.name
-    }
-    else {
-        groups = repositoryManager.browse()*.name
-    }
+    List<String> groups = repositoryManager.browse().findAll {
+        !clazz || (it.type in clazz)
+    }*.name
     groups.each {
         repositoryManager.delete(it)
     }
