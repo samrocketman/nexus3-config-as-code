@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /*
    This Nexus 3 REST function will toggle Nexus read-write or read-only.  This
    is useful for system tasks which need to toggle Nexus state in order to
@@ -26,6 +27,7 @@
                   the system initiator.  This will not put Nexus in read-write
                   mode if other types of freeze requests exist.
  */
+
 import org.sonatype.nexus.orient.freeze.DatabaseFreezeService
 import org.sonatype.nexus.orient.freeze.DatabaseFrozenStateManager
 import org.sonatype.nexus.orient.freeze.FreezeRequest
