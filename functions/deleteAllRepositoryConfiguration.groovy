@@ -31,6 +31,20 @@ blobStoreManager = blobStore.blobStoreManager
 repositoryManager = repository.repositoryManager
 selectorManager = container.lookup(SelectorManager.class.name)
 
+/**
+  A custom exception class to limit unnecessary text in the JSON result of the
+  Nexus REST API.
+ */
+class MyException extends Exception {
+    String message
+    MyException(String message) {
+        this.message = message
+    }
+    String toString() {
+        this.message
+    }
+}
+
 void deleteAllRepositories(Class clazz = null) {
     List<String> groups = repositoryManager.browse().findAll {
         !clazz || (it.type in clazz)
@@ -54,8 +68,12 @@ void deleteAllContentSelectors() {
     }
 }
 
+/*
+ * Main execution
+ */
+
 if(args.trim() != 'delete') {
-    return 'ERROR: must submit \'delete\' as POST data in order to really delete.  This is a protection from accidental wiping of an entire Nexus installation.'
+    throw new MyException('Must submit \'delete\' as POST data in order to really delete.  This is a protection from accidental wiping of an entire Nexus installation.')
 }
 
 deleteAllRepositories(GroupType)
