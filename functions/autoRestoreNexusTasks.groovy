@@ -1,10 +1,7 @@
 import groovy.json.JsonSlurper
-import org.sonatype.nexus.quartz.internal.task.QuartzTaskInfo
 import org.sonatype.nexus.scheduling.TaskConfiguration
 import org.sonatype.nexus.scheduling.TaskDescriptor
-import org.sonatype.nexus.scheduling.TaskFactory
 import org.sonatype.nexus.scheduling.TaskScheduler
-import org.sonatype.nexus.scheduling.schedule.Manual
 
 taskManager = container.lookup(TaskScheduler.class.name)
 //taskScheduler is class org.sonatype.nexus.quartz.internal.QuartzSchedulerSPI
@@ -28,7 +25,14 @@ TaskConfiguration createTaskConfigurationInstance(String name, String typeId) {
 void createTask(String name, Map json) {
     String typeId = json['type']
     List<String> blobstore_settings = ['blobstoreName', 'dryRun', 'integrityCheck', 'restoreBlobs', 'undeleteBlobs']
-    TaskConfiguration config = createTaskConfigurationInstance(name, typeId)
+    TaskConfiguration config
+    //check if exist
+    if(taskManager.getTaskById(name)) {
+        config = taskManager.getTaskById(name).configuration
+    }
+    else {
+        config = createTaskConfigurationInstance(name, typeId)
+    }
     json[typeId].findAll { k, v ->
         k in blobstore_settings
     }.each { k, v ->
@@ -66,5 +70,5 @@ tasks['tasks'].each { k, v ->
     createTask(k, v)
 }
 
-
+'success'
 //.metaClass.methods*.name.sort().unique().join(' ')
