@@ -42,6 +42,11 @@ Examples:
 
 See [additional USAGE](docs/USAGE.md) for more examples and options.
 
+# Backup and Restore Guide
+
+For backing up and restoring a production Nexus installation, refer to the
+[Backup and Restore Guide](./docs/backup_restore.md).
+
 # License
 
 [ASL v2](LICENSE)
