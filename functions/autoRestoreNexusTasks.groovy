@@ -22,9 +22,16 @@ TaskConfiguration createTaskConfigurationInstance(String name, String typeId) {
     config
 }
 
+Map<String, String> getTaskTypeDefaults(String typeId) {
+    (taskFactory.findDescriptor(typeId).formFields?.collect {
+        [
+            (it.id): (it.initialValue == null)? null : it.initialValue.toString()
+        ]
+    }?.sum()) ?: [:]
+}
+
 void createTask(String name, Map json) {
     String typeId = json['type']
-    List<String> blobstore_settings = ['blobstoreName', 'dryRun', 'integrityCheck', 'restoreBlobs', 'undeleteBlobs']
     TaskConfiguration config
     //check if exist
     if(taskManager.getTaskById(name)) {
@@ -33,10 +40,10 @@ void createTask(String name, Map json) {
     else {
         config = createTaskConfigurationInstance(name, typeId)
     }
-    json[typeId].findAll { k, v ->
-        k in blobstore_settings
-    }.each { k, v ->
-        config.setString(k, v.toString())
+    Map typeDefaults = getTaskTypeDefaults(config.typeId)
+    typeDefaults.each { setting, defaultValue ->
+        String value = json[typeId]?.get(setting, defaultValue) ?: defaultValue
+        config.setString(setting, value)
     }
     config.alertEmail = json.get('alertEmail', null)
     config.name = json.get('friendlyName', config.name)
@@ -65,10 +72,22 @@ String task_json = '''
 }
 '''
 
+task_json = '''
+{
+    "tasks": {
+        "reconcile-blob-maven-default": {
+            "type": "blobstore.rebuildComponentDB"
+        }
+    }
+}
+'''
+
 Map tasks = (new JsonSlurper()).parseText(task_json)
 tasks['tasks'].each { k, v ->
     createTask(k, v)
 }
 
 'success'
+//equals getAttributes getClass getHelpText getId getIdMapping getInitialValue getLabel getNameMapping getRegexValidation getStoreApi getStoreFilters getType hashCode isDisabled isReadOnly isRequired mandatory notify notifyAll optional setDisabled setHelpText setId setInitialValue setLabel setReadOnly setRegexValidation setRequired toString wait witHelpText witLabel withId withIdMapping withInitialValue withNameMapping withRegexValidation withRequired withStoreApi withStoreFilter
+//taskFactory.findDescriptor('blobstore.rebuildComponentDB').formFields[1].initialValue
 //.metaClass.methods*.name.sort().unique().join(' ')
