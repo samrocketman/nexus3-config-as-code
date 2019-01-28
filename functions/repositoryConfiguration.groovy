@@ -243,6 +243,17 @@ void createRepository(String provider, String type, String name, Map json) {
     if(type == 'group') {
         def group = repo_config.attributes('group')
         group.set('memberNames', json.get('repositories', []))
+        if(provider == 'docker') {
+            def docker = repo_config.attributes('docker')
+            docker.set('forceBasicAuth', Boolean.parseBoolean((json['docker']?.get('force_basic_auth', null))?:'true'))
+            docker.set('v1Enabled', Boolean.parseBoolean((json['docker']?.get('v1_enabled', null))?:'false'))
+            if(json['docker']?.get('http_port', null)) {
+                docker.set('httpPort', Integer.parseInt(json['docker']['http_port']))
+            }
+            if(json['docker']?.get('https_port', null)) {
+                docker.set('httpsPort', Integer.parseInt(json['docker']['https_port']))
+            }
+        }
     }
     else {
         if(type == 'hosted') {
