@@ -40,7 +40,7 @@ that one need only provide a list of blob store names to create.
     			"config": {
     				//mandatory fields
     				"bucket" : "bucket-name",
-                    "accessKeyId": "your access key id",
+                        "accessKeyId": "your access key id",
     				"region": "region",
     				"secretAccessKey": "your secret access key",
     				"expiration": "expiration",
