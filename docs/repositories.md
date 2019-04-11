@@ -34,25 +34,25 @@ that one need only provide a list of blob store names to create.
         "file": [
             "default"
         ],
-    	"s3": [
-    	    {
-    			"name": "s3-test-blob",
-    			"config": {
-    				//mandatory fields
-    				"bucket" : "bucket-name",
-                    "accessKeyId": "your access key id",
-    				"secretAccessKey": "your secret access key",
-    				"expiration": "expiration",
-                    "region": "region",
-    			
-    				//optional fields
-    				"sessionToken": "session token",
-    				"assumeRole": "assume role",
-    				"endpoint": "endpoint",
-    				"signertype": "signer type"
+        "s3": [
+                {
+                    "name": "s3-test-blob",
+                    "config": {
+                        //mandatory fields
+                        "bucket" : "bucket-name",
+                        "accessKeyId": "your access key id",
+                        "secretAccessKey": "your secret access key",
+                        "expiration": "expiration",
+                        "region": "region",
+
+                        //optional fields
+                        "sessionToken": "session token",
+                        "assumeRole": "assume role",
+                        "endpoint": "endpoint",
+                        "signertype": "signer type"
                 }
             }
-    	]
+        ]
     }
 }
 ```
