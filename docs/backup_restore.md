@@ -93,13 +93,13 @@ Steps to restore:
    ./scripts/upload_function.py -srf repositoryConfiguration -d ./path/to/repositories.json
    ```
 
-3. We're now ready to restore repository data.  Put Nexus into read-only mode.
+3. (Skip if only S3 repos are configured). We're now ready to restore repository data.  Put Nexus into read-only mode.
 
    ```
    ./scripts/upload_function.py -srf nexusFrozenState -S read-only
    ```
 
-4. Wipe out the existing blobs directory.  Again, assuming [Nexus in a docker
+4. (Skip if only S3 repos are configured) Wipe out the existing blobs directory.  Again, assuming [Nexus in a docker
    container][nexus-docker] refer to the following example.
 
    ```bash
@@ -107,14 +107,14 @@ Steps to restore:
    docker run -i --init --volumes-from "${CONTAINER_ID}" centos:7 rm -rf /nexus-data/blobs
    ```
 
-5. Restore the blob stores from the `tar` backup.
+5. (Skip if only S3 repos are configured) Restore the blob stores from the `tar` backup.
 
    ```
    CONTAINER_ID=$(docker-compose ps -q nexus3)
    docker run -i --init --volumes-from "${CONTAINER_ID}" centos:7 /usr/bin/tar -C /nexus-data -xv < backup.tar
    ```
 
-6. Take Nexus out of read-only mode.
+6. (Skip if only S3 repos are configured) Take Nexus out of read-only mode.
 
    ```
    ./scripts/upload_function.py -srf nexusFrozenState -S read-write
@@ -142,7 +142,9 @@ Steps to restore:
 # Learn more about the functions
 
 All of the above functions can be found in the [`functions/`
-directory](../functions/) of this repository.
+directory](../functions/) of this repository. When restoring from S3 new *-metrics.properties files will be created in you S3 bucket.
+This is because each time Nexus3 starts it creates new ID for ElasticSearch database. This is is part of metrics provided for Nexus3.
+You can delete all old *-metrics.properties on your S3 manually safely (leave the one with newest timestamp).
 
 
 [nexus-docker]: https://github.com/samrocketman/docker-compose-nexus3-proxy
