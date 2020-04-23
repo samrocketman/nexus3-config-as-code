@@ -1,17 +1,17 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3.8
 #Created by Sam Gleske
 #License: ASLv2 https://github.com/samrocketman/nexus3-config-as-code
 #Sun Apr 22 16:02:54 PDT 2018
 #Ubuntu 16.04.4 LTS
 #Linux 4.13.0-38-generic x86_64
 #GNU bash, version 4.3.48(1)-release (x86_64-pc-linux-gnu)
-#Python 2.7.12
+#Python 3.8
 
 # DESCRIPTION:
 #     Upload script to Nexus 3 scripting endpoint.
 #     Delete script from Nexus 3 scripting endpoint.
 
-from httplib import HTTPSConnection
+from http.client import HTTPSConnection
 import argparse
 import base64
 import json
@@ -244,7 +244,7 @@ if args.run:
             data = f.read()
     for script in args.groovy_files:
         url = "%s/%s/%s/run" % (args.nexus_endpoint, 'service/rest/v1/script', getScriptName(script))
-        print callNexusUrl(url, headers, data, 'POST')
+        print (callNexusUrl(url, headers, data, 'POST'))
 
 #
 # DELETE REST FUNCTIONS
