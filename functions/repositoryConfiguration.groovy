@@ -87,7 +87,7 @@ void checkIntValue(String provider, String type, String name, String key, def va
     }
 }
 
-void checkRepositorFormat(Map json) {
+void checkRepositoryFormat(Map json) {
     String valid_name = '^[a-zA-Z0-9][-_.a-zA-Z0-9]*$'
     Map found = [:]
     json['repositories'].each { provider, provider_value ->
@@ -195,7 +195,7 @@ void validateContentSelectors(def json) {
 
 void validateConfiguration(def json) {
     List<String> supported_root_keys = ['repositories', 'blobstores', 'content_selectors']
-    List<String> supported_blobstores = ['file']
+    List<String> supported_blobstores = ['file','s3']
     List<String> supported_repository_providers = ['bower', 'docker', 'gitlfs', 'maven2', 'npm', 'nuget', 'pypi', 'raw', 'rubygems']
     List<String> supported_repository_types = ['proxy', 'hosted', 'group']
     if(!(json in Map)) {
@@ -209,14 +209,14 @@ void validateConfiguration(def json) {
     }
     if('blobstores' in json || 'repositories' in json) {
         checkForEmptyValidation('blobstore types', ((json['blobstores']?.keySet() as List) - supported_blobstores))
-        if(!(json['blobstores']?.get('file') in List) || false in json['blobstores']?.get('file').collect { it in String }) {
-            throw new MyException('blobstore file type must contain a list of Strings.')
+        if((!(json['blobstores']?.get('file') in List) || false in json['blobstores']?.get('file').collect { it in String }) && (!(json['blobstores']?.get('s3') in List) || false in json['blobstores']?.get('s3').collect { it.name in String && it.config.bucket in String && it.config.accessKeyId in String && it.config.secretAccessKey in String && it.config.expiration in String})) {
+            println "blobstore file type must contain a list of Strings."
         }
         checkForEmptyValidation('repository providers', ((json['repositories']?.keySet() as List) - supported_repository_providers))
         checkForEmptyValidation('repository types', (json['repositories'].collect { k, v -> v.keySet() as List }.flatten().sort().unique() - supported_repository_types))
         checkForEmptyValidation('blobstores defined in repositories.  The following must be listed in the blobstores',
-                (getKnownDesiredBlobStores(json) - json['blobstores']['file']))
-        checkRepositorFormat(json)
+                (getKnownDesiredBlobStores(json) - json['blobstores']['file'] - json['blobstores']['s3'].name))
+        checkRepositoryFormat(json)
     }
     if('content_selectors' in json) {
         validateContentSelectors(json['content_selectors'])
@@ -376,6 +376,12 @@ if('blobstores' in config) {
         if(!blobStoreManager.get(store)) {
             blobStore.createFileBlobStore(store, store)
         }
+    }
+
+    config['blobstores']['s3'].each { store_config ->        
+        if(!blobStoreManager.get(store_config.name)) {
+           blobStore.createS3BlobStore(store_config.name, store_config.config)
+        }        
     }
 }
 

@@ -25,7 +25,7 @@ format validation.
 
 # Blob Store CaC
 
-Currently, only file blob stores are supported.  The configuration is simple in
+Currently, both file blob stores and s3 are supported.  The configuration is simple in
 that one need only provide a list of blob store names to create.
 
 ```json
@@ -33,6 +33,25 @@ that one need only provide a list of blob store names to create.
     "blobstores": {
         "file": [
             "default"
+        ],
+        "s3": [
+                {
+                    "name": "s3-test-blob",
+                    "config": {
+                        //mandatory fields
+                        "bucket" : "bucket-name",
+                        "accessKeyId": "your access key id",
+                        "secretAccessKey": "your secret access key",
+                        "expiration": "expiration",
+                        "region": "region",
+
+                        //optional fields
+                        "sessionToken": "session token",
+                        "assumeRole": "assume role",
+                        "endpoint": "endpoint",
+                        "signertype": "signer type"
+                }
+            }
         ]
     }
 }
